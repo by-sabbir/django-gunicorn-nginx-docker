@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  web:
+    build: .
+    container_name: test_deploy_web
+    command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - apphome:/app/
+      - staticfile:/app/static/
+    expose:
+      - 8000
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    container_name: test_deploy_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=hello
+
+  nginx:
+    build: ./nginx
+    container_name: test_deploy_nginx
+    volumes:
+      - apphome:/app/
+      - staticfile:/app/static/
+    ports:
+      - 8000:80
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  apphome:
+  staticfile:
