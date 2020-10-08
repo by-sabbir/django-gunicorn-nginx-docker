@@ -6,8 +6,8 @@ services:
     container_name: test_deploy_web
     command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - apphome:/app/
-      - staticfile:/app/static/
+      - ./app:/app/
+      - staticfiles:/app/static/
     expose:
       - 8000
     env_file:
@@ -29,14 +29,12 @@ services:
     build: ./nginx
     container_name: test_deploy_nginx
     volumes:
-      - apphome:/app/
-      - staticfile:/app/static/
+      - staticfiles:/app/static/
     ports:
-      - 8000:80
+      - 8008:80
     depends_on:
       - web
 
 volumes:
   postgres_data:
-  apphome:
-  staticfile:
+  staticfiles:
